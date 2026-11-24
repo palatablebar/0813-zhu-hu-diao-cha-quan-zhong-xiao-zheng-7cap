@@ -11,6 +11,7 @@ LABELS = {
     "ROW_LIMIT": "文件超过 2000 行",
     "FILE_REQUIRED": "请选择 CSV 文件",
     "RUN_NOT_FOUND": "批次不存在",
+    "RELEASE_NOT_FOUND": "发布版本不存在",
     "REVIEW_FIELDS": "请填写 3 至 200 字复核意见",
     "STALE_REVIEW": "批次已更新，请刷新",
     "RUN_FINALIZED": "批次已签发",
@@ -24,7 +25,7 @@ def response(error):
     code = error.code
     status = (
         404
-        if code in {"RUN_NOT_FOUND", "SAMPLE_UNKNOWN", "STAGE_UNKNOWN"}
+        if code in {"RUN_NOT_FOUND", "RELEASE_NOT_FOUND", "SAMPLE_UNKNOWN", "STAGE_UNKNOWN"}
         else (
             409
             if code in {"STALE_REVIEW", "RUN_FINALIZED", "UNRESOLVED_ISSUES"}

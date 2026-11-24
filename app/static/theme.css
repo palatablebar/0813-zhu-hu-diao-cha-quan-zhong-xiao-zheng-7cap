@@ -6,7 +6,7 @@
   color-scheme:light; }
 * {box-sizing:border-box} [hidden] {display:none!important}
 body.notebook {margin:0;background:var(--bg);color:var(--ink);font:var(--size)/1.55 var(--font-ui)}
-.notebook .desk {display:grid;grid-template-areas:"mast mast" "source source" "stages stages" "chart kpis" "chart results" "inspection results" "archive archive" "statusbar statusbar";grid-template-columns:1fr 1.55fr;gap:var(--gap);margin:auto;padding:clamp(14px,3vw,42px);max-width:1626px}
+.notebook .desk {display:grid;grid-template-areas:"mast mast" "source source" "stages stages" "chart kpis" "chart results" "inspection results" "delivery delivery" "archive archive" "statusbar statusbar";grid-template-columns:1fr 1.55fr;gap:var(--gap);margin:auto;padding:clamp(14px,3vw,42px);max-width:1626px}
 .notebook .mast {grid-area:mast;background:var(--surface);padding:var(--pad);min-width:0}
 .notebook .mast h1 {font:700 clamp(26px,4vw,73px)/1.1 var(--font-display);margin:0;overflow-wrap:anywhere}
 .notebook .role {color:var(--accent);margin:0 0 13px;font-weight:700}
@@ -20,18 +20,22 @@ body.notebook {margin:0;background:var(--bg);color:var(--ink);font:var(--size)/1
 .notebook button:is(:hover,[aria-pressed="true"]),.notebook .action {background:var(--accent);color:var(--surface);border-color:var(--accent)}
 .notebook button:disabled {opacity:.52;cursor:default} .notebook :focus-visible {outline:2px solid var(--accent);outline-offset:3px}
 .notebook a {color:var(--accent);text-underline-offset:.2em}
-.notebook .kpis {grid-area:kpis;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap);min-width:0}
+.notebook .kpis {grid-area:kpis;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);min-width:0}
 .notebook .metric {background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--pad);display:grid;align-content:center}
 .notebook .metric strong {font:600 clamp(22px,4vw,58px)/1.05 var(--font-num);font-variant-numeric:tabular-nums}
 .notebook .panel {background:var(--surface);padding:var(--pad);min-width:0;border:1px solid var(--line);border-radius:var(--radius)}
-.notebook .results {grid-area:results} .notebook .chart {grid-area:chart} .notebook .inspection {grid-area:inspection} .notebook .archive {grid-area:archive}
+.notebook .results {grid-area:results} .notebook .chart {grid-area:chart} .notebook .inspection {grid-area:inspection} .notebook .archive {grid-area:archive} .notebook .delivery {grid-area:delivery}
 .notebook h2 {font-size:19px;margin:0 0 10px} .notebook .panel-head {display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
 .notebook #counts,.notebook #run-status {color:var(--sub);overflow-wrap:anywhere}
 .notebook .scroll {overflow:auto;max-height:310px}
 .notebook table {border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;min-width:360px}
 .notebook th,.notebook td {text-align:left;height:var(--row);padding:5px 15px;border-bottom:1px solid var(--line);white-space:nowrap}
 .notebook th {position:sticky;top:0;background:var(--surface);color:var(--sub)} .notebook td:nth-child(n+2):nth-child(-n+4) {text-align:right}
-.notebook .badge {color:var(--alert);font-size:.83em;padding:2px 4px;white-space:nowrap} .notebook .badge:is([data-result="READY"],[data-result="APPROVED"]) {color:var(--accent)}
+.notebook .badge {color:var(--alert);font-size:.83em;padding:2px 4px;white-space:nowrap} .notebook .badge:is([data-result="READY"],[data-result="APPROVED"],[data-result="RELEASED"],[data-result="ISSUED"]) {color:var(--accent)}
+.notebook .checks {color:var(--sub);margin:8px 0 0;font: .88em/1.5 var(--font-num);overflow-wrap:anywhere}
+.notebook .checks[data-failure="true"] {color:var(--alert)}
+.notebook #delivery-rows td a {font-variant-numeric:tabular-nums}
+.notebook .delivery-actions {margin:6px 0 0} .notebook .delivery-actions a {font-weight:700}
 .notebook #detail {margin:0;max-height:230px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font: .91em/1.5 var(--font-num)}
 .notebook #history {list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--gap);margin:0} .notebook #history li {display:flex;align-items:center}
 .notebook #review {margin-top:14px;max-width:580px} .notebook textarea {display:block;width:100%;min-height:54px;cursor:text}
@@ -42,8 +46,8 @@ body.notebook {margin:0;background:var(--bg);color:var(--ink);font:var(--size)/1
 .notebook .chart {border-left:9px solid var(--accent)}
 .notebook .metric {border-block-end:2px dotted var(--accent)}
 .notebook .inspection pre {line-height:1.85}
-@media(max-width:1120px) { .notebook .desk {grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"mast mast" "source source" "stages stages" "kpis kpis" "results results" "chart inspection" "archive archive" "statusbar statusbar"} }
-@media(max-width:630px) { .notebook .desk {grid-template-columns:minmax(0,1fr);grid-template-areas:"mast" "source" "stages" "kpis" "chart" "results" "inspection" "archive" "statusbar"} .notebook .kpis {grid-template-columns:repeat(2,minmax(0,1fr))} .notebook .chart #visual {display:block!important} .notebook .stages button {width:auto} }
+@media(max-width:1120px) { .notebook .desk {grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"mast mast" "source source" "stages stages" "kpis kpis" "results results" "chart inspection" "delivery delivery" "archive archive" "statusbar statusbar"} }
+@media(max-width:630px) { .notebook .desk {grid-template-columns:minmax(0,1fr);grid-template-areas:"mast" "source" "stages" "kpis" "chart" "results" "inspection" "delivery" "archive" "statusbar"} .notebook .kpis {grid-template-columns:repeat(2,minmax(0,1fr))} .notebook .chart #visual {display:block!important} .notebook .stages button {width:auto} }
 @media print { .notebook .source,.notebook .stages,.notebook .archive,.notebook .statusbar {display:none} .notebook .desk {display:block} }
 
 .mark-piece {background:var(--accent);color:var(--surface);min-width:0}

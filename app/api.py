@@ -1,7 +1,9 @@
+import json
+
 from flask import Blueprint, Response, current_app, jsonify, request
 
 from app.business import DomainIssue
-from app.evidence.render import artifact
+from app.evidence.render import artifact, release_bundle
 from app.inputs import read_input
 from app.modules.pipeline import run
 from app.review.service import execute, review
@@ -41,6 +43,54 @@ def export(run_id):
         mimetype="application/json",
         headers={
             "Content-Disposition": f'attachment; filename="review-{report["id"][:12]}.json"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@api.get("/runs/<run_id>/releases")
+def run_releases(run_id):
+    store = current_app.extensions["runs"]
+    store.load(run_id)
+    return jsonify(items=store.releases_for(run_id))
+
+
+@api.get("/runs/<run_id>/bundle")
+def run_bundle(run_id):
+    store = current_app.extensions["runs"]
+    run = store.load(run_id)
+    packets = [
+        store.load_release(summary["id"])["packet"]
+        for summary in store.releases_for(run_id)
+    ]
+    return Response(
+        release_bundle(run, packets),
+        mimetype="application/json",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="bundle-{run_id[:12]}.json"'
+            ),
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@api.get("/releases")
+def releases():
+    return jsonify(items=current_app.extensions["runs"].releases())
+
+
+@api.get("/releases/<release_id>")
+def release_package(release_id):
+    item = current_app.extensions["runs"].load_release(release_id)
+    body = json.dumps(item["packet"], ensure_ascii=False, sort_keys=True, indent=2)
+    return Response(
+        body + "\n",
+        mimetype="application/json",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="release-{item["case"]}-v{item["version"]}.json"'
+            ),
             "Cache-Control": "no-store",
         },
     )

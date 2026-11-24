@@ -15,7 +15,7 @@
 {% endmacro %}
 {% macro metrics() %}
 <div class="kpis" aria-label="输入统计">
-  {% for key, text in [('input','输入行'), ('accepted','采信行'), ('isolated','隔离行'), ('cases','业务组')] %}
+  {% for key, text in [('input','输入行'), ('accepted','采信行'), ('isolated','隔离行'), ('cases','业务组'), ('released','可签发组'), ('deferred','暂缓组')] %}
   <div class="metric"><span>{{ text }}</span><strong data-metric="{{ key }}">—</strong></div>
   {% endfor %}
 </div>
@@ -24,6 +24,14 @@
 <section class="panel results" aria-labelledby="panel-title">
   <div class="panel-head"><h2 id="panel-title">运行对账</h2><span id="counts"></span></div>
   <div class="scroll"><table id="rows" aria-label="阶段结果"></table></div>
+</section>
+{% endmacro %}
+{% macro delivery() %}
+<section class="panel delivery" aria-labelledby="delivery-title">
+  <div class="panel-head"><h2 id="delivery-title">组级发布包</h2><span id="delivery-counts"></span></div>
+  <div class="scroll"><table id="delivery-rows" aria-label="组级发布与暂缓"></table></div>
+  <p id="delivery-checks" class="checks" aria-live="polite"></p>
+  <p class="delivery-actions"><a id="bundle" hidden>下载本次发布包</a></p>
 </section>
 {% endmacro %}
 {% macro visual(p) %}

@@ -26,15 +26,21 @@ function announce(text, failure = false) {
 
 function draw() {
   if (!report) return;
-  snapshot(report, selected, stage);
+  snapshot(report, selected, stage, batch?.releases, batch?.id);
   visualize(report, selected);
   for (const button of stages) button.setAttribute('aria-pressed',String(button.dataset.stage===stage));
   document.querySelector('#panel-title').textContent = stages.find(button => button.dataset.stage===stage)?.textContent || '运行对账';
   detail.hidden = !batch;
   if (batch) {
     document.querySelector('#run-status').textContent = `${batch.id.slice(0,10)} · ${batch.status} · r${batch.revision}`;
+    const release = report.release;
+    const blocked = release ? release.totals.deferred_groups : 0;
+    const partial = release && release.totals.released_groups && blocked
+      ? ` · ${release.totals.released_groups} 组已入发布包，${blocked} 组暂缓`
+      : '';
     detail.querySelector('[value="APPROVED"]').disabled = !report.balance.releasable || batch.status==='APPROVED';
     detail.querySelector('[value="HELD"]').disabled = batch.status==='APPROVED';
+    detail.querySelector('#run-status').textContent += partial;
     evidence.href = `/api/runs/${batch.id}/evidence`;
   }
 }

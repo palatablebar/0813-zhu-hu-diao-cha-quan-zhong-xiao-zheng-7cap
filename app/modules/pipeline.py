@@ -5,6 +5,7 @@ from app.modules.grouping import case_groups
 from app.modules.policy import policy
 from app.modules.prepare import prepare
 from app.modules.reconcile import balance
+from app.modules.release import release_plan
 
 
 def evaluate(rows, stage):
@@ -33,4 +34,5 @@ def run(data, stage=5):
     output["cases"] = cases
     if stage >= 5:
         output["balance"] = balance(intake, cases)
+        output["release"] = release_plan(intake, cases)
     return output

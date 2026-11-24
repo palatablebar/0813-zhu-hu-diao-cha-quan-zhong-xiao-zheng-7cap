@@ -16,20 +16,28 @@ def execute(store, data):
     fingerprint = sha256(data).hexdigest()
     run_id = sha256(f"{RULE_VERSION}:{fingerprint}".encode()).hexdigest()
     try:
-        return store.load(run_id)
+        stored = store.load(run_id)
     except DomainIssue as error:
         if error.code != "RUN_NOT_FOUND":
             raise
-    report = run(data)
-    report["manifest"] = dict(
-        sha256=fingerprint,
-        version=RULE_VERSION,
-        created=now(),
-        duration_ms=round((monotonic() - start) * 1000, 3),
-        bytes=len(data),
-        run_id=run_id,
-    )
-    return store.register(run_id, report)
+        report = run(data)
+        report["manifest"] = dict(
+            sha256=fingerprint,
+            version=RULE_VERSION,
+            created=now(),
+            duration_ms=round((monotonic() - start) * 1000, 3),
+            bytes=len(data),
+            run_id=run_id,
+        )
+        stored = store.register(run_id, report)
+    if not stored["releases"]:
+        plan = stored["report"].get("release")
+        if plan and plan.get("balanced"):
+            store.issue(
+                run_id, plan, stored["report"]["manifest"]["created"], fingerprint
+            )
+            stored = store.load(run_id)
+    return stored
 
 
 def review(store, run_id, values):
